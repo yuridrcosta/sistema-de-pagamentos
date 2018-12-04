@@ -111,209 +111,217 @@ public class PayrollSystem {
     //makeUndo START
     //POSSIBILIDADE DE REFAZER TUDO PARA IMPLEMENTAR DATAS DE PAGAMENTO
     public static void makeUndo(){
-        Operation last = buffer.peekOperUndo();
-        Employee rem;
-        String saux;
-        int iaux;
-        Operation newOp;
-        
-        System.out.println("A última operação realizada está sendo desfeita!");
-        switch(last.oper){
-            case 1:
-                rem = findIdent(last.ident);
-                if(rem != null){
-                    newOp = new Operation(2,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                    buffer.addOperRedo(newOp);
-                    buffer.removeOperUndo();
-                    employees.remove(rem);
-                }else{
-                    System.out.println("ERRO: Empregado não encontrado!");
-                }
-                break;
-            case 2:
-                newOp = new Operation(1,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                buffer.addOperRedo(newOp);
-                rem = new Employee(last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                buffer.removeOperUndo();
-                employees.add(rem);
-                break;
-            case 3:
-                //nesse caso para alterar o nome, o objeto operation deve salvar o nome antigo
-                rem = findIdent(last.ident);
-                
-                saux = rem.name;
-                rem.name = last.name;
-                
-                newOp = new Operation(3,last.ident,saux,last.address,last.type,last.payMet, last.sindStatus, last.identSind,last.tax);
-                
-                buffer.removeOperUndo();
-                buffer.addOperRedo(newOp);
+        if(buffer.undo.size()>0){
+            Operation last = buffer.peekOperUndo();
+            Employee rem;
+            String saux;
+            int iaux;
+            Operation newOp;
 
-                break;
-            case 4:
-                
-                rem = findIdent(last.ident);
-                
-                saux = rem.getAddress();
-                rem.setAddress(last.address);
-                
-                newOp = new Operation(4,last.ident,last.name,saux,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                
-                buffer.removeOperUndo();
-                buffer.addOperRedo(newOp);
-                break;
-            case 5:
-                //TODO Definir data de pagamentos
-                rem = findIdent(last.ident);
-                
-                iaux = rem.getType();
-                rem.setType(last.type);
-                newOp = new Operation(5,last.ident,last.name,last.address,iaux,last.payMet,last.sindStatus,last.identSind,last.tax);
-                
-                buffer.removeOperUndo();
-                buffer.addOperRedo(newOp);
-                break;
-            case 6:
-                
-                rem = findIdent(last.ident);
-                
-                iaux = rem.getPayMet();
-                rem.setType(last.payMet);
-                newOp = new Operation(5,last.ident,last.name,last.address,last.type,iaux,last.sindStatus,last.identSind,last.tax);
-                
-                buffer.removeOperUndo();
-                buffer.addOperRedo(newOp);
-                break;
-            case 7:
-                rem = findIdent(last.ident);
-                int iaux1;
-                float faux;
-                boolean stat = last.sindStatus;
-                
-                if(stat == true){
-                    rem.setSindStatus(true);
-                    rem.setIdentSind(last.identSind);
-                    rem.setTax(last.tax);
-                    newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,false,-1,0);
-                    
-                }else{
-                    iaux1 = rem.getIdentSind();
-                    faux = rem.getTax();
-                    rem.setSindStatus(false);
-                    rem.setIdentSind(-1);
-                    rem.setTax(0);
-                    newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,true,iaux1,faux);
-                }
-                
-                
-                buffer.removeOperUndo();
-                buffer.addOperRedo(newOp);
-                break;
-            case 8:
-                break;
+            System.out.println("A última operação realizada está sendo desfeita!");
+            switch(last.oper){
+                case 1:
+                    rem = findIdent(last.ident);
+                    if(rem != null){
+                        newOp = new Operation(2,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+                        buffer.addOperRedo(newOp);
+                        buffer.removeOperUndo();
+                        employees.remove(rem);
+                    }else{
+                        System.out.println("ERRO: Empregado não encontrado!");
+                    }
+                    break;
+                case 2:
+                    newOp = new Operation(1,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+                    buffer.addOperRedo(newOp);
+                    rem = new Employee(last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+                    buffer.removeOperUndo();
+                    employees.add(rem);
+                    break;
+                case 3:
+                    //nesse caso para alterar o nome, o objeto operation deve salvar o nome antigo
+                    rem = findIdent(last.ident);
+
+                    saux = rem.name;
+                    rem.name = last.name;
+
+                    newOp = new Operation(3,last.ident,saux,last.address,last.type,last.payMet, last.sindStatus, last.identSind,last.tax);
+
+                    buffer.removeOperUndo();
+                    buffer.addOperRedo(newOp);
+
+                    break;
+                case 4:
+
+                    rem = findIdent(last.ident);
+
+                    saux = rem.getAddress();
+                    rem.setAddress(last.address);
+
+                    newOp = new Operation(4,last.ident,last.name,saux,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+
+                    buffer.removeOperUndo();
+                    buffer.addOperRedo(newOp);
+                    break;
+                case 5:
+                    //TODO Definir data de pagamentos
+                    rem = findIdent(last.ident);
+
+                    iaux = rem.getType();
+                    rem.setType(last.type);
+                    newOp = new Operation(5,last.ident,last.name,last.address,iaux,last.payMet,last.sindStatus,last.identSind,last.tax);
+
+                    buffer.removeOperUndo();
+                    buffer.addOperRedo(newOp);
+                    break;
+                case 6:
+
+                    rem = findIdent(last.ident);
+
+                    iaux = rem.getPayMet();
+                    rem.setType(last.payMet);
+                    newOp = new Operation(5,last.ident,last.name,last.address,last.type,iaux,last.sindStatus,last.identSind,last.tax);
+
+                    buffer.removeOperUndo();
+                    buffer.addOperRedo(newOp);
+                    break;
+                case 7:
+                    rem = findIdent(last.ident);
+                    int iaux1;
+                    float faux;
+                    boolean stat = last.sindStatus;
+
+                    if(stat == true){
+                        rem.setSindStatus(true);
+                        rem.setIdentSind(last.identSind);
+                        rem.setTax(last.tax);
+                        newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,false,-1,0);
+
+                    }else{
+                        iaux1 = rem.getIdentSind();
+                        faux = rem.getTax();
+                        rem.setSindStatus(false);
+                        rem.setIdentSind(-1);
+                        rem.setTax(0);
+                        newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,true,iaux1,faux);
+                    }
+
+
+                    buffer.removeOperUndo();
+                    buffer.addOperRedo(newOp);
+                    break;
+                case 8:
+                    break;
+            }
+        }else{
+            System.out.println("ERRO: Não há operação a ser desfeita!");
         }
     }
     //makeUndo FINISH
     //makeRedo START
     public static void makeRedo(){
-        Operation last = buffer.peekOperRedo();
-        Operation newOp;
-        Employee emp;
-        String saux;
-        int iaux;
-        
-        switch(last.oper){
-            case 1:
-                //retirar
-                emp = findIdent(last.ident);
-                
-                newOp = new Operation(2,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                buffer.addOperUndo(newOp);
-                buffer.removeOperRedo();
-                
-                employees.remove(emp);
-                
-                break;
-            case 2:
-                //tenho que adicionar de volta
-                newOp = new Operation(1,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                buffer.addOperUndo(newOp);
-                emp = new Employee(last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                buffer.removeOperRedo();
-                employees.add(emp);
-                break;
-            case 3:
-                
-                emp = findIdent(last.ident);
-                
-                saux = emp.name;
-                emp.name = last.name;
-                
-                newOp = new Operation(3,last.ident,saux,last.address,last.type,last.payMet, last.sindStatus, last.identSind,last.tax);
-                
-                buffer.removeOperRedo();
-                buffer.addOperUndo(newOp);
-                
-                break;
-            case 4:
-                emp = findIdent(last.ident);
-                
-                saux = emp.getAddress();
-                emp.setAddress(last.address);
-                
-                newOp = new Operation(4,last.ident,last.name,saux,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
-                
-                buffer.removeOperRedo();
-                buffer.addOperUndo(newOp);
-                break;
-            case 5:
-                //TODO Definir data de pagamento
-                emp = findIdent(last.ident);
-                
-                iaux = emp.getType();
-                emp.setType(last.type);
-                newOp = new Operation(5,last.ident,last.name,last.address,iaux,last.payMet,last.sindStatus,last.identSind,last.tax);
-                
-                buffer.removeOperRedo();
-                buffer.addOperUndo(newOp);
-                break;
-            case 6:
-                emp = findIdent(last.ident);
-                
-                iaux = emp.getPayMet();
-                emp.setType(last.payMet);
-                newOp = new Operation(5,last.ident,last.name,last.address,last.type,iaux,last.sindStatus,last.identSind,last.tax);
-                
-                buffer.removeOperRedo();
-                buffer.addOperUndo(newOp);
-                break;
-            case 7:
-                emp = findIdent(last.ident);
-                int iaux1;
-                float faux;
-                boolean stat = last.sindStatus;
-                
-                if(stat == true){
-                    emp.setSindStatus(true);
-                    emp.setIdentSind(last.identSind);
-                    emp.setTax(last.tax);
-                    newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,false,-1,0);
-                    
-                }else{
-                    iaux1 = emp.getIdentSind();
-                    faux = emp.getTax();
-                    emp.setSindStatus(false);
-                    emp.setIdentSind(-1);
-                    emp.setTax(0);
-                    newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,true,iaux1,faux);
-                }
-                
-                
-                buffer.removeOperRedo();
-                buffer.addOperUndo(newOp);
-                break;
-            case 8:
-                break;
+        if(buffer.undo.size()>0){
+            Operation last = buffer.peekOperRedo();
+            Operation newOp;
+            Employee emp;
+            String saux;
+            int iaux;
+
+            switch(last.oper){
+                case 1:
+                    //retirar
+                    emp = findIdent(last.ident);
+
+                    newOp = new Operation(2,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+                    buffer.addOperUndo(newOp);
+                    buffer.removeOperRedo();
+
+                    employees.remove(emp);
+
+                    break;
+                case 2:
+                    //tenho que adicionar de volta
+                    newOp = new Operation(1,last.ident,last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+                    buffer.addOperUndo(newOp);
+                    emp = new Employee(last.name,last.address,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+                    buffer.removeOperRedo();
+                    employees.add(emp);
+                    break;
+                case 3:
+
+                    emp = findIdent(last.ident);
+
+                    saux = emp.name;
+                    emp.name = last.name;
+
+                    newOp = new Operation(3,last.ident,saux,last.address,last.type,last.payMet, last.sindStatus, last.identSind,last.tax);
+
+                    buffer.removeOperRedo();
+                    buffer.addOperUndo(newOp);
+
+                    break;
+                case 4:
+                    emp = findIdent(last.ident);
+
+                    saux = emp.getAddress();
+                    emp.setAddress(last.address);
+
+                    newOp = new Operation(4,last.ident,last.name,saux,last.type,last.payMet,last.sindStatus,last.identSind,last.tax);
+
+                    buffer.removeOperRedo();
+                    buffer.addOperUndo(newOp);
+                    break;
+                case 5:
+                    //TODO Definir data de pagamento
+                    emp = findIdent(last.ident);
+
+                    iaux = emp.getType();
+                    emp.setType(last.type);
+                    newOp = new Operation(5,last.ident,last.name,last.address,iaux,last.payMet,last.sindStatus,last.identSind,last.tax);
+
+                    buffer.removeOperRedo();
+                    buffer.addOperUndo(newOp);
+                    break;
+                case 6:
+                    emp = findIdent(last.ident);
+
+                    iaux = emp.getPayMet();
+                    emp.setType(last.payMet);
+                    newOp = new Operation(5,last.ident,last.name,last.address,last.type,iaux,last.sindStatus,last.identSind,last.tax);
+
+                    buffer.removeOperRedo();
+                    buffer.addOperUndo(newOp);
+                    break;
+                case 7:
+                    emp = findIdent(last.ident);
+                    int iaux1;
+                    float faux;
+                    boolean stat = last.sindStatus;
+
+                    if(stat == true){
+                        emp.setSindStatus(true);
+                        emp.setIdentSind(last.identSind);
+                        emp.setTax(last.tax);
+                        newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,false,-1,0);
+
+                    }else{
+                        iaux1 = emp.getIdentSind();
+                        faux = emp.getTax();
+                        emp.setSindStatus(false);
+                        emp.setIdentSind(-1);
+                        emp.setTax(0);
+                        newOp = new Operation(6,last.ident,last.name,last.address,last.type,last.payMet,true,iaux1,faux);
+                    }
+
+
+                    buffer.removeOperRedo();
+                    buffer.addOperUndo(newOp);
+                    break;
+                case 8:
+                    break;
+            }
+        }else{
+            System.out.println("ERRO: Não há operação a ser refeita!");
         }
     }
     //makeRedo FINISH
