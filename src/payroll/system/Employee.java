@@ -10,10 +10,11 @@ public class Employee {
     public int type; //1==Horistas, 2==Assalariado e 3==Comissionado
     public int payMet;//1==Cheque pelos correios, 2==Cheque em mãos e 3==Depósito
     public int[] payDate = new int[3];
+    public int sales;
     public boolean sindStatus;
     public int identSind;//Número para identificação no sindicato
     public float tax;//Porcentagem do salário
-    
+    public float comission;
     public Employee(){
         
     }
@@ -87,5 +88,31 @@ public class Employee {
     public int getIdent() {
         return ident;
     }
+
+    public void setPayDate(int[] payDate) {
+        this.payDate = payDate;
+    }
+
+    public int[] getPayDate() {
+        return payDate;
+    }
+
+    public void setSales(int sales) {
+        this.sales = sales;
+    }
+
+    public int getSales() {
+        return sales;
+    }
+
+    public float getComission() {
+        return comission;
+    }
+
+    public void setComission(float comission) {
+        this.comission = comission;
+    }
+    
+    
     
 }
