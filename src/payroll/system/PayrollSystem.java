@@ -7,12 +7,16 @@ import java.util.Iterator;
 
 public class PayrollSystem {
     
+    public static int[] date = new int[3];
     static ArrayList<Employee> employees = new ArrayList<Employee>();
     static Scanner read = new Scanner(System.in);
     static Buffer buffer = new Buffer();
     
     public static void main(String[] args) {
         
+        int iaux;
+        float faux=0;
+        int[] pay = new int[3];
         int menuOpt;
         String nm;
         String ad;
@@ -24,6 +28,14 @@ public class PayrollSystem {
         int nEmp = 0;
         
         System.out.println("Bem vindo ao sistema de folha de pagamentos!");
+        System.out.println("Digite a data de hoje: (Formato: dd mm aaaa)");
+        iaux = read.nextInt();
+        date[0] = iaux;
+        iaux = read.nextInt();
+        date[1] = iaux;
+        iaux = read.nextInt();
+        date[2] = iaux;
+        System.out.println("A data de hoje é: "+date[0]+"/"+date[1]+"/"+date[2]);
         showMainMenu();
         menuOpt = read.nextInt();
         
@@ -40,6 +52,17 @@ public class PayrollSystem {
                     ad = read.nextLine();
                     System.out.println("Digite o tipo de empregado (inteiro): (1 - Horista, 2 - Assalariado e 3 - Comissionado)");
                     tp = read.nextInt();
+                    if(tp == 3){
+                        System.out.println("Digite a porcentagem da comissão sobre as vendas: (real) (FORMATO:\"x,x\")");
+                        faux = read.nextFloat();
+                    }
+                    System.out.println("Digite a data do próximo pagamento deste funcionário: (Formato: dd mm aaaa)");
+                    iaux = read.nextInt();
+                    pay[0] = iaux;
+                    iaux = read.nextInt();
+                    pay[1] = iaux;
+                    iaux = read.nextInt();
+                    pay[2] = iaux;
                     System.out.println("Digite o método de pagamento (inteiro): (1-Cheque pelos Correios, 2-Cheque em mãos, 3-Depósito)");
                     pm = read.nextInt();
                     System.out.println("O empregado é sindicalizado? (Digite \"true\" para SIM e digite \"false\" para NÃO)");
@@ -57,6 +80,9 @@ public class PayrollSystem {
                     }
                     
                     Employee emp = new Employee(nm,ad,tp,pm,ss,is,tx);
+                    emp.setPayDate(pay);
+                    emp.setComission(faux);
+                    emp.setSales(0);
                     emp.ident = 1000 + nEmp;
                     nEmp++;
                     Operation op = new Operation(1,emp.ident,nm,ad,tp,pm,ss,is,tx);
@@ -87,6 +113,8 @@ public class PayrollSystem {
                 case 6:
                     makeRedo();
                     break;
+                case 7:
+                    break;
                 default:
                     break;
             }
@@ -106,6 +134,7 @@ public class PayrollSystem {
         System.out.println("        4- Alterar dados de um empregado");
         System.out.println("        5- Desfazer operação");
         System.out.println("        6- Refazer operação");
+        System.out.println("        7- Realizar pagamentos do dia");
         System.out.println("        0- Sair");
     }
     //makeUndo START
@@ -345,11 +374,38 @@ public class PayrollSystem {
     
     public static void listEmployees()
     {
+        String type;
+        String payMet;
         String nm;
         for (Iterator<Employee> it = employees.iterator(); it.hasNext();) {
             Employee st = it.next();
-            nm = st.getName();
-           System.out.println("- " + nm);
+            //nm = st.getName();
+            if(st!=null){
+                if(st.getType() == 1){
+                    type = "Horista";
+                }else if(st.getType() == 2){
+                    type = "Assalariado";
+                }else{
+                    type = "Comissionado";
+                }
+
+                if(st.getPayMet() == 1){
+                    payMet = "Cheque pelos Correios";
+                }else if(st.getPayMet() == 2){
+                    payMet = "Cheque em mãos";
+                }else{
+                    payMet = "Depósito em conta";
+                }
+               //System.out.println("- " + nm);
+               if(st.getSindStatus() == true){
+                   System.out.printf("Nome: %s - Endereço: %s - Tipo: %s - Método de Pagamento: %s - Sindicalizado: Sim\n", 
+                        st.getName(), st.getAddress(), type, payMet);
+               }
+               else{
+                   System.out.printf("Nome: %s - Endereço: %s - Tipo: %s - Método de Pagamento: %s - Sindicalizado: Não\n", 
+                        st.getName(), st.getAddress(), type, payMet);
+               }
+           }
         }
     }
     
@@ -455,14 +511,12 @@ public class PayrollSystem {
 
                         break;
                     case 6:
-                        //TODO Colocar no sistema de undo/redo
                         System.out.println("Digite o novo número de identificação no sindicato(inteiro):");
                         iaux = read.nextInt();
                         emp.setIdentSind(iaux);
 
                         break;
                     case 7:
-                        //TODO Colocar no sistema de undo/redo
                         System.out.println("Digite a nova taxa sindical(real)(FORMATO:x,x): ");
                         faux = read.nextFloat();
                         emp.setTax(faux);
@@ -572,3 +626,4 @@ public class PayrollSystem {
         
     }
 }
+
