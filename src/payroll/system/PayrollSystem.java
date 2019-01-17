@@ -3,6 +3,7 @@ package payroll.system;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 
 public class PayrollSystem {
@@ -29,15 +30,15 @@ public class PayrollSystem {
         
         System.out.println("Bem vindo ao sistema de folha de pagamentos!");
         System.out.println("Digite a data de hoje: (Formato: dd mm aaaa)");
-        iaux = read.nextInt();
+        iaux = readNumber();
         date[0] = iaux;
-        iaux = read.nextInt();
+        iaux = readNumber();
         date[1] = iaux;
-        iaux = read.nextInt();
+        iaux = readNumber();
         date[2] = iaux;
         System.out.println("A data de hoje é: "+date[0]+"/"+date[1]+"/"+date[2]);
         showMainMenu();
-        menuOpt = read.nextInt();
+        menuOpt = readNumber();
         
         while(menuOpt != 0)
         {
@@ -51,27 +52,27 @@ public class PayrollSystem {
                     System.out.println("Digite o endereço:");
                     ad = read.nextLine();
                     System.out.println("Digite o tipo de empregado (inteiro): (1 - Horista, 2 - Assalariado e 3 - Comissionado)");
-                    tp = read.nextInt();
+                    tp = readNumber();
                     if(tp == 3){
                         System.out.println("Digite a porcentagem da comissão sobre as vendas: (real) (FORMATO:\"x,x\")");
-                        faux = read.nextFloat();
+                        faux = readFloat();
                     }
                     System.out.println("Digite a data do próximo pagamento deste funcionário: (Formato: dd mm aaaa)");
-                    iaux = read.nextInt();
+                    iaux = readNumber();
                     pay[0] = iaux;
-                    iaux = read.nextInt();
+                    iaux = readNumber();
                     pay[1] = iaux;
-                    iaux = read.nextInt();
+                    iaux = readNumber();
                     pay[2] = iaux;
                     System.out.println("Digite o método de pagamento (inteiro): (1-Cheque pelos Correios, 2-Cheque em mãos, 3-Depósito)");
-                    pm = read.nextInt();
+                    pm = readNumber();
                     System.out.println("O empregado é sindicalizado? (Digite \"true\" para SIM e digite \"false\" para NÃO)");
                     ss = read.nextBoolean();
                     if(ss == true){
                         System.out.println("Qual a identificação do empregado no sindicato?");
-                        is = read.nextInt();
+                        is = readNumber();
                         System.out.println("Qual a taxa que o sindicato cobra do empregado? (real)(FORMATO:\"x,x\")");
-                        tx = read.nextFloat();
+                        tx = readNumber();
                     }
                     else
                     {
@@ -120,7 +121,7 @@ public class PayrollSystem {
             }
             
             showMainMenu();
-            menuOpt = read.nextInt();
+            menuOpt = readNumber();
         }
         
         
@@ -499,7 +500,7 @@ public class PayrollSystem {
                 System.out.println("        7- Alterar taxa do sindicato");
                 System.out.println("        0- Sair");
 
-                menu = read.nextInt();
+                menu = readNumber();
                 switch (menu){
                     case 5:
                         
@@ -512,13 +513,13 @@ public class PayrollSystem {
                         break;
                     case 6:
                         System.out.println("Digite o novo número de identificação no sindicato(inteiro):");
-                        iaux = read.nextInt();
+                        iaux = readNumber();
                         emp.setIdentSind(iaux);
 
                         break;
                     case 7:
                         System.out.println("Digite a nova taxa sindical(real)(FORMATO:x,x): ");
-                        faux = read.nextFloat();
+                        faux = readFloat();
                         emp.setTax(faux);
 
                         break;
@@ -537,16 +538,16 @@ public class PayrollSystem {
                 System.out.println("        5- Alterar status de sindicalização");
                 System.out.println("        0- Sair");
 
-                menu = read.nextInt();
+                menu = readNumber();
 
                 if(menu == 5){
                     newOp = new Operation(7,emp.ident,emp.name,emp.address,emp.type,emp.payMet,false,-1,0);
                     buffer.addOperUndo(newOp);
                     System.out.println("Digite o número de identificação sindical:");
-                    iaux = read.nextInt();
+                    iaux = readNumber();
                     emp.setIdentSind(iaux);
                     System.out.println("Digite o valor da taxa sindical: (FORMATO: x,x)");
-                    faux = read.nextFloat();
+                    faux = readFloat();
                     emp.setTax(faux);
                     emp.setSindStatus(true);
 
@@ -578,7 +579,7 @@ public class PayrollSystem {
                     newOp = new Operation(5,emp.ident,emp.name,emp.address,emp.type,emp.payMet,emp.sindStatus,emp.identSind,emp.tax);
                     buffer.addOperUndo(newOp);
                     System.out.printf("Digite:\n 1 para alterar para HORISTA\n 2 para alterar para ASSALARIADO\n 3 para alterar para COMISSIONADO\n");
-                    iaux = read.nextInt();
+                    iaux = readNumber();
 
                     if(iaux == 1){
 
@@ -599,7 +600,7 @@ public class PayrollSystem {
                     newOp = new Operation(6,emp.ident,emp.name,emp.address,emp.type,emp.payMet,emp.sindStatus,emp.identSind,emp.tax);
                     buffer.addOperUndo(newOp);
                     System.out.printf("Digite:\n 1 para alterar para CHEQUE PELOS CORREIOS\n 2 para alterar para CHEQUE EM MÃOS\n 3 para alterar para DEPÓSITO EM CONTA\n");
-                    iaux = read.nextInt();
+                    iaux = readNumber();
 
                     if(iaux == 1){
 
@@ -625,5 +626,28 @@ public class PayrollSystem {
         }
         
     }
+    
+    public static int readNumber(){
+        int rNumber = 0;
+        
+        try{
+            rNumber = read.nextInt();
+        }catch(InputMismatchException error){
+            System.out.println("ERRO: Você deve digitar um número!");
+        }
+            
+        return rNumber;
+    }
+    
+    public static Float readFloat(){
+        float rFloat = 0;
+        
+        try{
+            rFloat = read.nextFloat();
+        }catch(InputMismatchException error){
+            System.out.println("ERRO: Você deve digitar um número real (float)! (Formato: XX,X)");
+        }
+        
+        return rFloat;
+    }
 }
-
